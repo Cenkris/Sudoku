@@ -6,13 +6,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashMap;
+import java.util.*;
 
 public class Game extends JFrame {
     private JPanel basePanel = new JPanel(new FlowLayout());
     private JPanel gamePanel = new JPanel(new GridLayout(3, 3, 7, 7));
     private JPanel extrasPanel = new JPanel(new BorderLayout());
-    private HashMap<String, JTextField> storage = new HashMap<>();
+    private final Map<String, JTextField> storage = new HashMap<>();
+    private final Deque<JTextField> highlightedCells = new ArrayDeque<>();
 
     public Game() {
         initGameFields();
@@ -70,18 +71,27 @@ public class Game extends JFrame {
                         String squareName = component.getName();
                         String squareNumber = squareName.split("")[0];
                         System.out.println(squareName);
-                        Component[] gamePanelComponents = gamePanel.getComponents();
 
-                        for (Component gameComponent : gamePanelComponents) {
-                            if (squareNumber.equals(gameComponent.getName())) {
-                                JPanel smallPanel = (JPanel) gameComponent;
-                                Component[] smallPanelComponents = smallPanel.getComponents();
-                                for (Component smallComponent : smallPanelComponents) {
-                                    JTextField castedSmallComponent = (JTextField) smallComponent;
-                                    castedSmallComponent.setBackground(Color.BLUE);
-                                }
+                        for (String number : storage.keySet()) {
+                            String square = number.split("")[0];
+                            if (square.equals(squareNumber)) {
+                                JTextField field = storage.get(number);
+                                field.setBackground(Color.BLUE);
+                                highlightedCells.add(field);
                             }
                         }
+//                        Component[] gamePanelComponents = gamePanel.getComponents();
+//
+//                        for (Component gameComponent : gamePanelComponents) {
+//                            if (squareNumber.equals(gameComponent.getName())) {
+//                                JPanel smallPanel = (JPanel) gameComponent;
+//                                Component[] smallPanelComponents = smallPanel.getComponents();
+//                                for (Component smallComponent : smallPanelComponents) {
+//                                    JTextField castedSmallComponent = (JTextField) smallComponent;
+//                                    castedSmallComponent.setBackground(Color.BLUE);
+//                                }
+//                            }
+//                        }
 
 //                        while (gamePanel.getComponentAt(x, y) != null) {
 //                            if (gamePanel.getComponentAt(x, y) instanceof JTextField) {
@@ -114,11 +124,15 @@ public class Game extends JFrame {
 
                     @Override
                     public void mouseExited(MouseEvent e) {
+                        while (!highlightedCells.isEmpty()){
+                            highlightedCells.pop().setBackground(background);
+                        }
                         textField.setBackground(background);
                     }
                 });
                 smallGamePanel.setName(String.valueOf(i));
                 smallGamePanel.add(textField);
+                storage.put(textField.getName(), textField);
             }
             gamePanel.add(smallGamePanel);
         }
