@@ -41,10 +41,8 @@ public class Game extends JFrame {
             JPanel smallGamePanel = new JPanel(new GridLayout(3, 3, 1, 1));
             for (int j = 1; j <= 9; j++) {
                 JTextField textField = new JTextField();
-//                textField.setText(String.valueOf(i) + j);
                 Font font = textField.getFont();
                 Dimension dimension = textField.getSize();
-//                textField.setName(i + " " + j);
                 textFieldNameSetter(textField, i, j);
                 textField.setFont(new Font(font.getName(), Font.PLAIN, 40));
                 textField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -57,7 +55,6 @@ public class Game extends JFrame {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         int pressedKeyCode = e.getKeyCode();
-//                        System.out.println(pressedKeyCode);
                         if (pressedKeyCode >= 49 && pressedKeyCode <= 57) {
                             textField.setText(String.valueOf((char) pressedKeyCode));
                         }
@@ -73,26 +70,6 @@ public class Game extends JFrame {
                     public void mouseClicked(MouseEvent e) {
                         Component component = e.getComponent();
                         highlight(component);
-//                        Component[] gamePanelComponents = gamePanel.getComponents();
-//
-//                        for (Component gameComponent : gamePanelComponents) {
-//                            if (squareNumber.equals(gameComponent.getName())) {
-//                                JPanel smallPanel = (JPanel) gameComponent;
-//                                Component[] smallPanelComponents = smallPanel.getComponents();
-//                                for (Component smallComponent : smallPanelComponents) {
-//                                    JTextField castedSmallComponent = (JTextField) smallComponent;
-//                                    castedSmallComponent.setBackground(Color.BLUE);
-//                                }
-//                            }
-//                        }
-
-//                        while (gamePanel.getComponentAt(x, y) != null) {
-//                            if (gamePanel.getComponentAt(x, y) instanceof JTextField) {
-//                                JTextField jTextField = (JTextField) getComponentAt(x, y);
-//                                jTextField.setBackground(Color.BLUE);
-//                            }
-//                            x = x + 100;
-//                        }
                     }
 
                     @Override
@@ -215,17 +192,11 @@ public class Game extends JFrame {
         textField.setName(name);
     }
 
-    private void positionCalculator(int x, int y, MouseEvent e) {
-        Point point = e.getPoint();
-    }
-
     private void initGamePanel() {
         JSeparator separator = new JSeparator();
         separator.setPreferredSize(new Dimension(1, 900));
         separator.setOrientation(SwingConstants.VERTICAL);
         basePanel.add(gamePanel);
-//        basePanel.add(separator);
-//        basePanel.add(extrasPanel);
     }
 
     private void initDefaultValues() {
