@@ -2,10 +2,7 @@ package Application.View;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -17,12 +14,37 @@ public class Game extends JFrame {
     private JPanel extrasPanel = new JPanel(new BorderLayout());
     private final Map<String, JTextField> storage = new HashMap<>();
     private final Deque<JTextField> highlightedCells = new ArrayDeque<>();
+    private JCheckBoxMenuItem highlightMenuItem;
 
     public Game() {
         initGameFields();
         initGamePanel();
         initGameInsertButtons();
+        initOptionsMenu();
         initDefaultValues();
+    }
+
+    private void initOptionsMenu() {
+        JMenuBar optionsMenuBar = new JMenuBar();
+        JMenu menu = new JMenu("Options");
+        JMenu extrasMenu = new JMenu("Extras");
+        highlightMenuItem = new JCheckBoxMenuItem("Highlight rows and columns");
+        JMenuItem clearMenuItem = new JMenuItem("Clear");
+        MouseAdapter mouseAdapter = new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("Clickes");
+                for(String number : storage.keySet()){
+                    storage.get(number).setText("");
+                }
+            }
+        };
+        clearMenuItem.addMouseListener(mouseAdapter);
+        menu.add(clearMenuItem);
+        extrasMenu.add(highlightMenuItem);
+        menu.add(extrasMenu);
+        optionsMenuBar.add(menu);
+        setJMenuBar(optionsMenuBar);
     }
 
     private void initGameInsertButtons() {
@@ -42,7 +64,6 @@ public class Game extends JFrame {
             for (int j = 1; j <= 9; j++) {
                 JTextField textField = new JTextField();
                 Font font = textField.getFont();
-                Dimension dimension = textField.getSize();
                 textFieldNameSetter(textField, i, j);
                 textField.setFont(new Font(font.getName(), Font.PLAIN, 40));
                 textField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -68,8 +89,9 @@ public class Game extends JFrame {
                 textField.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        Component component = e.getComponent();
-                        highlight(component);
+                        if (highlightMenuItem.getState()) {
+                            highlight(e);
+                        }
                     }
 
                     @Override
@@ -100,7 +122,6 @@ public class Game extends JFrame {
                         textField.setBackground(background);
                     }
                 });
-//                smallGamePanel.setName(String.valueOf(i));
                 smallGamePanel.add(textField);
                 storage.put(textField.getName(), textField);
             }
@@ -108,7 +129,8 @@ public class Game extends JFrame {
         }
     }
 
-    private void highlight(Component component) {
+    private void highlight(MouseEvent event) {
+        Component component = event.getComponent();
         String squareName = component.getName();
         String squareNumber = squareName.split(" ")[1];
         String squareLetter = squareName.split(" ")[0];
