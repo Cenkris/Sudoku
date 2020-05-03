@@ -6,7 +6,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game extends JFrame {
     private JPanel basePanel = new JPanel(new FlowLayout());
@@ -41,7 +44,8 @@ public class Game extends JFrame {
 //                textField.setText(String.valueOf(i) + j);
                 Font font = textField.getFont();
                 Dimension dimension = textField.getSize();
-                textField.setName(i + " " + j);
+//                textField.setName(i + " " + j);
+                textFieldNameSetter(textField, i, j);
                 textField.setFont(new Font(font.getName(), Font.PLAIN, 40));
                 textField.setHorizontalAlignment(SwingConstants.CENTER);
                 textField.setEditable(false);
@@ -53,7 +57,7 @@ public class Game extends JFrame {
                     @Override
                     public void keyPressed(KeyEvent e) {
                         int pressedKeyCode = e.getKeyCode();
-                        System.out.println(pressedKeyCode);
+//                        System.out.println(pressedKeyCode);
                         if (pressedKeyCode >= 49 && pressedKeyCode <= 57) {
                             textField.setText(String.valueOf((char) pressedKeyCode));
                         }
@@ -68,18 +72,7 @@ public class Game extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         Component component = e.getComponent();
-                        String squareName = component.getName();
-                        String squareNumber = squareName.split("")[0];
-                        System.out.println(squareName);
-
-                        for (String number : storage.keySet()) {
-                            String square = number.split("")[0];
-                            if (square.equals(squareNumber)) {
-                                JTextField field = storage.get(number);
-                                field.setBackground(Color.BLUE);
-                                highlightedCells.add(field);
-                            }
-                        }
+                        highlight(component);
 //                        Component[] gamePanelComponents = gamePanel.getComponents();
 //
 //                        for (Component gameComponent : gamePanelComponents) {
@@ -124,18 +117,102 @@ public class Game extends JFrame {
 
                     @Override
                     public void mouseExited(MouseEvent e) {
-                        while (!highlightedCells.isEmpty()){
+                        while (!highlightedCells.isEmpty()) {
                             highlightedCells.pop().setBackground(background);
                         }
                         textField.setBackground(background);
                     }
                 });
-                smallGamePanel.setName(String.valueOf(i));
+//                smallGamePanel.setName(String.valueOf(i));
                 smallGamePanel.add(textField);
                 storage.put(textField.getName(), textField);
             }
             gamePanel.add(smallGamePanel);
         }
+    }
+
+    private void highlight(Component component) {
+        String squareName = component.getName();
+        String squareNumber = squareName.split(" ")[1];
+        String squareLetter = squareName.split(" ")[0];
+
+        for (String number : storage.keySet()) {
+            String vertical = number.split(" ")[1];
+            String horizontal = number.split(" ")[0];
+
+            if (vertical.equals(squareNumber)) {
+                JTextField field = storage.get(number);
+                field.setBackground(new Color(9990762));
+                highlightedCells.add(field);
+            }
+
+            if (horizontal.equals(squareLetter)) {
+                JTextField field = storage.get(number);
+                field.setBackground(new Color(9990762));
+                highlightedCells.add(field);
+            }
+        }
+    }
+
+    private void textFieldNameSetter(JTextField textField, int i, int j) {
+        //TODO: fix this mess
+        //make rows A-I, columns 1-9
+        String name = "";
+        if (i <= 3) {
+            if (j <= 3) {
+                name = "A";
+            } else if (j <= 6) {
+                name = "B";
+            } else {
+                name = "C";
+            }
+        } else if (i <= 6) {
+            if (j <= 3) {
+                name = "D";
+            } else if (j <= 6) {
+                name = "E";
+            } else {
+                name = "F";
+            }
+        } else {
+            if (j <= 3) {
+                name = "G";
+            } else if (j <= 6) {
+                name = "H";
+            } else {
+                name = "I";
+            }
+        }
+
+
+        if (i % 3 == 1) {
+            if (j % 3 == 0) {
+                name += " 3";
+            } else if (j % 3 == 1) {
+                name += " 1";
+            } else {
+                name += " 2";
+            }
+        } else if (i % 3 == 0) {
+            if (j % 3 == 0) {
+                name += " 9";
+            } else if (j % 3 == 1) {
+                name += " 7";
+            } else {
+                name += " 8";
+            }
+        } else {
+            if (j % 3 == 0) {
+                name += " 6";
+            } else if (j % 3 == 1) {
+                name += " 4";
+            } else {
+                name += " 5";
+            }
+        }
+
+
+        textField.setName(name);
     }
 
     private void positionCalculator(int x, int y, MouseEvent e) {
